@@ -4,7 +4,7 @@
 */
 
 void enableTimer(uint16_t period);
-void setupDAC();
+void enableDAC();
 void setupNVIC();
 void setupGPIO();
 void pick_sound(uint8_t button);

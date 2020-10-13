@@ -10,6 +10,7 @@
 
 int cnt = 0;
 bool playing = false;
+uint8_t init_cnt = 0;
 
 void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 {
@@ -23,6 +24,10 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 			*DAC0_CH0DATA = playing_sound->samples[cnt] << 0;	//Sound values are 8-bit to save memory
 			*DAC0_CH1DATA = playing_sound->samples[cnt] << 0;
 			cnt++;
+		} else if(init_cnt<8){
+			pick_sound(init_cnt);
+			init_cnt++;
+			cnt = 0;pick_sound(id);
 		} else {
 			disableTimer();
 			disableDAC();
@@ -63,6 +68,7 @@ void button_handler(uint8_t init)
 	 * Disable sleep mode after leaving interrupt handle
 	 */
 	if (init == 1) { //Initial sound effects
+		init_cnt++;
 		playing = true;
 		pick_sound(1);
 		enableTimer(SYSTEM_CLK/playing_sound->sampling_freq);
@@ -71,7 +77,8 @@ void button_handler(uint8_t init)
 		uint32_t but_reg = *GPIO_PC_DIN;
 		if (playing == false && but_reg != 0xFF) {
 			playing = true;
-			for (uint8_t id = 0; id < 8; id++) {	// Figure out which button is pressed. Id = 0 - 7
+			uint8_t id = 0;
+			for (; id < 8; id++) {	// Figure out which button is pressed. Id = 0 - 7
 				if (((~but_reg >> id) & 0x01) == 1) {
 					pick_sound(id);
 					break;
