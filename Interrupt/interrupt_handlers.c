@@ -27,7 +27,7 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 		} else if(init_cnt<8){
 			pick_sound(init_cnt);
 			init_cnt++;
-			cnt = 0;pick_sound(id);
+			cnt = 0;
 		} else {
 			disableTimer();
 			disableDAC();
