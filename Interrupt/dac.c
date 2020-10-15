@@ -17,7 +17,7 @@ void enableDAC()
 }
 
 
-void disableDAC() 
+void disableDAC()
 {
 	/*
 	 * Completely disables the DAC

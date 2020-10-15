@@ -15,7 +15,7 @@ void setupGPIO()
 	/* enable high frequency GPIO clock */
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;
 
-	/* Setup sequence for outputs: set high drive strength,
+	/* Setup sequence for outputs: set high drive strength(20mA),
 	 * set pins A8-15 as output, and turn all LEDs off */
 	*GPIO_PA_CTRL = 0x02;
 	*GPIO_PA_MODEH = 0x55555555;
