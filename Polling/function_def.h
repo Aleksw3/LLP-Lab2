@@ -12,3 +12,4 @@ void disableTimer();
 void button_handler(uint8_t init);
 void disableDAC();
 void push_sound();
+void init_sound();

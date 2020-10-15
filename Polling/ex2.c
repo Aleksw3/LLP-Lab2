@@ -19,19 +19,17 @@ int main(void)
 	 * Instantiation functions. Initializes the GPIOs, enable
 	 * interrupts, and plays startup music
 	 */
-	setupGPIO(); //Initiate GPIO pins for gamepad
-	// setupNVIC(); //Enable interrupt handling 
+	setupGPIO(); //Initiate GPIO pins for gamepad 
 
-	playing = true;
-	pick_sound(0);  
-	enableTimer(SYSTEM_CLK/playing_sound->sampling_freq);
-	enableDAC();
+	init_sound();
+	pick_sound(0);
 	*GPIO_PA_DOUT = 0x00;
 	uint8_t last_but_reg = 0x00;
+	uint8_t but_reg;
 	while (1){
-		uint8_t but_reg = *GPIO_PC_DIN; 
+		but_reg = *GPIO_PC_DIN; 
 
-		if(playing == false && but_reg != 0xFF && but_reg!=last_but_reg){ //Check if a button has been pushed
+		if(playing == false && but_reg != 0xFF && but_reg!=last_but_reg){ //Check for a rising flank of a button signal
 			uint8_t id = 0;		
 			for(; id < 8; id++){ // Figure out which button is pressed. Id = 0 - 7
 				if(((~but_reg>>id) & 0x01) == 1){
@@ -40,13 +38,11 @@ int main(void)
 				}
 			}
 			*GPIO_PA_DOUT = ~((1<<id)<<8);
-			playing = true;
-			cnt = 0;
-			enableTimer();
-			enableDAC();
+			init_sound();
 		}else if(playing == true){
-			if(*TIMER1_CNT>floor(SYSTEM_CLK/playing_sound->sampling_freq)){
+			if(*TIMER1_CNT>=SYSTEM_CLK/playing_sound->sampling_freq){
 				push_sound();
+				*TIMER1_CNT = 0;
 			}
 		}
 		
@@ -56,6 +52,12 @@ int main(void)
 
 
 	return 0;
+}
+void init_sound(){
+	playing = true;
+	cnt = 0;
+	enableTimer();
+	enableDAC();
 }
 void push_sound(){
 	if (playing == true) {
