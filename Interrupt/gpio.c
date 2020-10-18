@@ -12,16 +12,25 @@ void setupGPIO()
 	 * Button GPIOs are configured to use interrupts
 	 */
 
-	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;	/* enable GPIO clock */
-	*GPIO_PA_CTRL = 0x02;			/* set high drive strength */
-	*GPIO_PA_MODEH = 0x55555555;	/* set pins A8-15 as output */
-	*GPIO_PA_DOUT = 0xFF << 8;		/* off all leds */
+	/* enable high frequency GPIO clock */
+	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;
 
-	*GPIO_PC_MODEL = 0x33333333;	//Configure button GPIO as inputs with pull(up or down depending on dout) and a filter
-	*GPIO_PC_DOUT = 0xFF;			// Configure the input GPIOs to use pull-ups
+	/* Setup sequence for outputs: set high drive strength,
+	 * set pins A8-15 as output, and turn all LEDs off */
+	*GPIO_PA_CTRL = 0x02;
+	*GPIO_PA_MODEH = 0x55555555;
+	*GPIO_PA_DOUT = 0xFF << 8;
 
-	*GPIO_EXTIPSELL = 0x22222222;	// Enable pins 0-7 of PC as interrupts
-	*GPIO_IEN = 0xFF;				//Enable interrupts for pins 0-7 of the buttons
-	*GPIO_EXTIRISE = 0xFF;			//Only enable GPIO interrupt for rising edge
+	/* Setup sequence for inputs: Configure buttons as inputs with pull
+	 * up resistor and a filter*/
+	*GPIO_PC_MODEL = 0x33333333;
+	*GPIO_PC_DOUT = 0xFF;
+
+	/* Setup sequence for interrupt: Select external interrupt from pins
+	 * 0-7 of PC, Enable interrupts for pins 0-7 and enable interrupt for
+	 * rising and falling edge */
+	*GPIO_EXTIPSELL = 0x22222222;
+	*GPIO_IEN = 0xFF;
+	*GPIO_EXTIRISE = 0xFF;
 	*GPIO_EXTIFALL = 0xFF;
 }
