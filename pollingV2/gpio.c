@@ -20,7 +20,7 @@ void setupGPIO()
 	*GPIO_PC_MODEL = 0x33333333;	//Configure button GPIO as inputs with pull(up or down depending on dout) and a filter
 	*GPIO_PC_DOUT = 0xFF;			// Configure the input GPIOs to use pull-ups
 
-	*GPIO_EXTIPSELL = 0x2dd2222222;	// Enable pins 0-7 of PC as interrupts
+	*GPIO_EXTIPSELL = 0x22222222;	// Enable pins 0-7 of PC as interrupts
 	*GPIO_IEN = 0xFF;				//Enable interrupts for pins 0-7 of the buttons
 	*GPIO_EXTIRISE = 0xFF;			//Only enable GPIO interrupt for rising edge
 	*GPIO_EXTIFALL = 0xFF;
