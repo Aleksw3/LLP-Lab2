@@ -8,8 +8,8 @@
 
 #define SYSTEM_CLK 14000000
 
-int cnt = 0;
-// uint8_t init_cnt = 0;
+int i = 0;
+// uint8_t init_i = 0;
 bool startup = true;
 bool playing = false;
 uint16_t timer_limit;
@@ -23,6 +23,7 @@ int main(void)
 	 * Instantiation functions. Initializes the GPIOs
 	 * and plays startup music
 	 */
+	
 	setupGPIO();		//Initiate GPIO pins for gamepad 
 
 	/*
@@ -64,7 +65,7 @@ void init_sound()
   	 * instantiates the playing of a sound
 	 */
 	playing = true;
-	cnt = 0;
+	i = 0;
 	timer_limit = SYSTEM_CLK / current_sound->sampling_freq;
 	enableTimer();
 	enableDAC();
@@ -78,12 +79,12 @@ void push_sound()
 	 * otherwise it stops playing, or continues
 	 * playing other sounds(i.e for the startup)
 	 */
-	if (cnt < current_sound->length) {
-		*DAC0_CH0DATA = current_sound->samples[cnt] << 0;	//Push sample to DAC
-		*DAC0_CH1DATA = current_sound->samples[cnt] << 0;	//Shift samples to amplify sound strength
-		cnt++;
+	if (i < current_sound->length) {
+		*DAC0_CH0DATA = current_sound->samples[i] << 0;	//Push sample to DAC
+		*DAC0_CH1DATA = current_sound->samples[i] << 0;	//Shift samples to amplify sound strength
+		i++;
 	} else {
-		cnt = 0;
+		i = 0;
 		if (startup) {
 			select_sound(1);
 			startup = false;
