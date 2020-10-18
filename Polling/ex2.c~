@@ -1,0 +1,95 @@
+#include <stdint.h>
+#include <stdbool.h>
+#include <math.h>
+
+#include "efm32gg.h"
+#include "function_def.h"
+#include "sounds.h"
+
+#define SYSTEM_CLK 14000000
+
+
+int cnt = 0;
+// uint8_t init_cnt = 0;
+bool startup = true;
+bool playing = false;
+uint16_t timer_limit;
+int main(void)
+{
+	char mask = 1; //Mask bit used in finding button location
+	uint8_t last_button = 0x00;
+	uint8_t button;
+
+	/*
+	 * Instantiation functions. Initializes the GPIOs
+	 * and plays startup music
+	 */
+	setupGPIO(); //Initiate GPIO pins for gamepad 
+	
+	/*
+    Startup music: Plays first sound number 3,
+    then it will play sound number 2 before 
+    waiting for button press.
+    */
+
+	select_sound(2);
+	init_sound();
+	*GPIO_PA_DOUT = 0x00;
+	while (1){
+		if(playing == true){
+			if(*TIMER1_CNT>=timer_limit){
+				push_sound();				
+				*TIMER1_CNT -= timer_limit;			
+			}
+		}else{
+			button = *GPIO_PC_DIN ^ 0xFF; //Invert button values 
+			if(button != 0 && button != last_button){ //Only activate on rising edge
+				uint8_t button_loc = 0;		
+
+				//Loop through the variable to find the active bit 
+				while (!((button >> button_loc) & mask)) button_loc++;
+				select_sound(button_loc);  
+				*GPIO_PA_DOUT = *GPIO_PC_DIN<<8;
+				init_sound();
+			}
+			last_button = button;
+		}
+	}
+	return 0;
+}
+void init_sound(){
+	playing = true;
+	cnt = 0;
+	timer_limit = SYSTEM_CLK/current_sound->sampling_freq;
+	enableTimer();
+	enableDAC();
+}
+
+void push_sound(){
+	if (cnt < current_sound->length) {
+		*DAC0_CH0DATA = current_sound->samples[cnt] << 0;	//Push sample to DAC
+		*DAC0_CH1DATA = current_sound->samples[cnt] << 0;	//Shift samples to amplify sound strength
+		cnt++;
+	} else {
+		cnt = 0;
+		if(startup){
+			select_sound(1);
+			startup = false;
+		} else {
+			disableTimer();
+			disableDAC();
+			*GPIO_PA_DOUT = 0xFF << 8;	//turn off LEDs
+			playing = false;
+		}
+	}
+}
+
+
+void setupNVIC()
+{
+  /*
+   * Interrupt handles are enabled through vector table
+	 * We enable interrupt handler for GPIO and timer1
+   */
+  *ISER0 |= (ISER0_GPIO_EVEN | ISER0_GPIO_ODD | ISER0_TIMER1);
+}

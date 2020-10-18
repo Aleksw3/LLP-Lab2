@@ -13,4 +13,4 @@ typedef struct Sound {
   uint8_t samples[];
 }Sound;
 
-Sound *playing_sound;
+Sound *current_sound;

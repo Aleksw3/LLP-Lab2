@@ -4,7 +4,6 @@
 #include "efm32gg.h"
 #include "function_def.h"
 
-
 void setupGPIO()
 {
 	/*

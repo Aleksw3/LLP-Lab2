@@ -8,9 +8,9 @@
  */
 
 typedef struct Sound {
-	uint32_t length;
-	uint16_t sampling_freq;
-	uint8_t samples[];
-} Sound;
+  uint32_t length;
+  uint16_t sampling_freq;
+  uint8_t samples[];
+}Sound;
 
 Sound *current_sound;

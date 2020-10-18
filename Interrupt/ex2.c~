@@ -11,9 +11,9 @@ int main(void)
 	 * Instantiation functions. Initializes the GPIOs, enable
 	 * interrupts, and plays startup music
 	 */
-	setupGPIO();		// Initiate GPIO pins for gamepad
-	setupNVIC();		// Enable interrupt handling
-	button_handler(1);	// Play startup music
+	setupGPIO(); // Initiate GPIO pins for gamepad
+	setupNVIC(); // Enable interrupt handling
+	button_handler(1); // Play startup music
 	return 0;
 }
 

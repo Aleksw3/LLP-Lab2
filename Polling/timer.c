@@ -17,7 +17,7 @@ void enableTimer()
 	 * start counter
 	 */
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1;	// Enable clock
-	*TIMER1_CMD = 0x01;		//Start counting
+	*TIMER1_CMD = 0x01;	//Start counting
 }
 
 void disableTimer()

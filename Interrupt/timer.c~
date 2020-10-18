@@ -19,8 +19,8 @@ void enableTimer(uint16_t period)
 
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1;	// Enable HF clock for timer1
 	*TIMER1_TOP = period;	// Top counter value
-	*TIMER1_IEN = 0x01;	// Interrupt on overflow
-	*TIMER1_CMD = 0x01;	// Start counting
+	*TIMER1_IEN = 0x01;   // Interrupt on overflow
+	*TIMER1_CMD = 0x01;   // Start counting
 }
 
 void disableTimer()

@@ -19,23 +19,23 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 	 * Stops the timer and DAC if all the samples of the sound effect
 	 * has been played
 	 */
-	if (playing == true) {
-		if (cnt < current_sound->length) {	// Sound playback if not end of sound
-			// Sound values are 8-bit. Shift left to increase volume
-			*DAC0_CH0DATA = current_sound->samples[cnt] << 0;
-			*DAC0_CH1DATA = current_sound->samples[cnt] << 0;
-			cnt++;
-		} else if (init_cnt < 8) {	// Play next part of startup sound
-			select_sound(init_cnt);
-			init_cnt++;
-			cnt = 0;
-		} else {	// Disable periphery related to sound playback
-			disableTimer();
-			disableDAC();
-			*GPIO_PA_DOUT = 0xFF << 8;	// Turn off LEDs
-			*SCR = 0x06;	// Allows deepsleep
-			cnt = 0;
-			playing = false;
+	 if (playing == true) {
+	   if (cnt < current_sound->length) {   // Sound playback if not end of sound
+	     // Sound values are 8-bit. Shift left to increase volume
+	     *DAC0_CH0DATA = current_sound->samples[cnt] << 0;
+	     *DAC0_CH1DATA = current_sound->samples[cnt] << 0;
+	     cnt++;
+	   } else if (init_cnt < 8) {   // Play next part of startup sound
+	     select_sound(init_cnt);
+	     init_cnt++;
+	     cnt = 0;
+	   } else {	// Disable periphery related to sound playback
+	     disableTimer();
+	     disableDAC();
+	     *GPIO_PA_DOUT = 0xFF << 8;  // Turn off LEDs
+	     *SCR = 0x06;  // Allows deepsleep
+	     cnt = 0;
+	     playing = false;
 		}
 	}
 	*TIMER1_IFC = *TIMER1_IF;	//Clear interrupt flags
@@ -49,6 +49,7 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 	button_handler(0);
 	*GPIO_IFC = *GPIO_IF;	//Clear interrupt flags
 }
+
 
 void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 {
@@ -67,7 +68,7 @@ void button_handler(uint8_t init)
 	 * Enable LED corresponding to sound being played
 	 * Disable sleep mode after leaving interrupt handle
 	 */
-	if (init == 1) {	// Initial sound effects
+	if (init == 1) { // Initial sound effects
 		init_cnt++;
 		playing = true;
 		*GPIO_PA_DOUT = 0x00;
@@ -75,17 +76,16 @@ void button_handler(uint8_t init)
 		enableTimer(SYSTEM_CLK / current_sound->sampling_freq);
 		enableDAC();
 	} else {
-		uint32_t button = *GPIO_PC_DIN ^ 0xFF;	// Read the values from buttons
+		uint32_t button = *GPIO_PC_DIN ^ 0xFF; // Read the values from buttons
 		uint8_t mask = 1;
 		if (playing == false && button != 0) {
 			playing = true;
-			uint8_t button_loc = 0;
+			uint8_t button_loc = 0;		
 			//Loop through the variable to find the active bit 
-			while (!((button >> button_loc) & mask))
-				button_loc++;
-			select_sound(button_loc);
-			*GPIO_PA_DOUT = *GPIO_PA_DIN << 8;	// Enable LED according to sound playing
-			*SCR = 0x04;	// Disables return to sleep when exiting interrupt handler
+			while (!((button >> button_loc) & mask)) button_loc++;
+			select_sound(button_loc); 
+			*GPIO_PA_DOUT = *GPIO_PA_DIN<<8;	// Enable LED according to sound playing
+			*SCR = 0x04; // Disables return to sleep when exiting interrupt handler
 			//Initialize timer according to sequence sampling frequency
 			enableTimer(SYSTEM_CLK / current_sound->sampling_freq);
 			enableDAC();
