@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdbool.h>
-#include <math.h>
 
 #include "efm32gg.h"
 #include "function_def.h"

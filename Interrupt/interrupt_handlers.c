@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdbool.h>		//This allows us to use booleans
-#include <math.h>
 
 #include "efm32gg.h"
 #include "sounds.h"
@@ -8,9 +7,9 @@
 
 #define   SYSTEM_CLK	  14000000
 
-int cnt = 0;
+int i = 0;
 bool playing = false;
-uint8_t init_cnt = 0;
+uint8_t init_i = 0;
 
 void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 {
@@ -20,21 +19,21 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 	 * has been played
 	 */
 	if (playing == true) {
-		if (cnt < current_sound->length) {	// Sound playback if not end of sound
+		if (i < current_sound->length) {	// Sound playback if not end of sound
 			// Sound values are 8-bit. Shift left to increase volume
-			*DAC0_CH0DATA = current_sound->samples[cnt] << 0;
-			*DAC0_CH1DATA = current_sound->samples[cnt] << 0;
-			cnt++;
-		} else if (init_cnt < 8) {	// Play next part of startup sound
-			select_sound(init_cnt);
-			init_cnt++;
-			cnt = 0;
+			*DAC0_CH0DATA = current_sound->samples[i] << 0;
+			*DAC0_CH1DATA = current_sound->samples[i] << 0;
+			i++;
+		} else if (init_i < 8) {	// Play next part of startup sound
+			select_sound(init_i);
+			init_i++;
+			i = 0;
 		} else {	// Disable periphery related to sound playback
 			disableTimer();
 			disableDAC();
 			*GPIO_PA_DOUT = 0xFF << 8;	// Turn off LEDs
 			*SCR = 0x06;	// Allows deepsleep
-			cnt = 0;
+			i = 0;
 			playing = false;
 		}
 	}
@@ -68,7 +67,7 @@ void button_handler(uint8_t init)
 	 * Disable sleep mode after leaving interrupt handle
 	 */
 	if (init == 1) {	// Initial sound effects
-		init_cnt++;
+		init_i++;
 		playing = true;
 		*GPIO_PA_DOUT = 0x00;
 		select_sound(1);

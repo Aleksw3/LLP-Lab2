@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdbool.h>
-#include <math.h>
 
 #include "efm32gg.h"
 #include "function_def.h"
@@ -23,7 +22,7 @@ int main(void)
 	 * Instantiation functions. Initializes the GPIOs
 	 * and plays startup music
 	 */
-	
+
 	setupGPIO();		//Initiate GPIO pins for gamepad 
 
 	/*
