@@ -71,6 +71,7 @@ void button_handler(uint8_t init)
 	if (init == 1) { // Initial sound effects
 		init_cnt++;
 		playing = true;
+		*GPIO_PA_DOUT = 0x00;
 		pick_sound(1);
 		enableTimer(SYSTEM_CLK / playing_sound->sampling_freq);
 		enableDAC();

@@ -19,9 +19,9 @@ def read_file(name):
 	return data
 
 
-sleep = read_file("sleep")
-polling = read_file("polling_fixed")
-deep_sleep = read_file("deep_sleep")
+sleep = read_file("without_led_sleep_mode")
+polling = read_file("without_leds_polling")
+deep_sleep = read_file("without_leds_deep_sleep")
 
 print(f"avg idle sleep current {np.mean(sleep['current'][-120:-1])} mA")
 print(f"avg idle deep_sleep current {np.mean(deep_sleep['current'][-120:-1])*1000} uA")
@@ -59,9 +59,10 @@ print(f"avg idle polling current {np.mean(polling['current'][-50:-1])} mA")
 # plt.show()
 
 ## Idle current
-a = 50
-b = 50
-c = 50
+a = -1
+
+b = -1
+c = -1
 plt.plot(polling["time"][0:c]-polling["time"][0],polling["current"][0:c])
 plt.plot(sleep["time"][0:a]-sleep["time"][0],sleep["current"][0:a])
 plt.plot(deep_sleep["time"][0:b]-deep_sleep["time"][0],deep_sleep["current"][0:b])
@@ -70,5 +71,5 @@ plt.ylabel("Current [mA]")
 plt.xlabel("Time [s]")
 plt.legend(["Deep Sleep", "Sleep","Polling"][::-1])
 plt.grid()
-plt.savefig("Current_comparison.png")
+plt.savefig("Current_comparison_without_leds.png")
 plt.show()
