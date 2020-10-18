@@ -55,6 +55,7 @@ void init_sound(){
 	enableTimer();
 	enableDAC();
 }
+
 void push_sound(){
 	if (cnt < playing_sound->length) {
 		*DAC0_CH0DATA = playing_sound->samples[cnt] << 0;	//Sound values are 8-bit to save memory
@@ -76,8 +77,9 @@ void push_sound(){
 
 void setupNVIC()
 {
-	/*
-	 * Interrupt handles are enabled through vector table
-	 */
-	*ISER0 |= (ISER0_GPIO_EVEN | ISER0_GPIO_ODD | ISER0_TIMER1);
+  /*
+   * Interrupt handles are enabled through vector table
+	 * We enable interrupt handler for GPIO and timer1
+   */
+  *ISER0 |= (ISER0_GPIO_EVEN | ISER0_GPIO_ODD | ISER0_TIMER1);
 }
